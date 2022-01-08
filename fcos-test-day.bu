@@ -1,0 +1,24 @@
+variant: fcos
+version: 1.4.0
+passwd:
+  users:
+    - name: clouduser
+      password_hash: $6$kmAqbdDq55w6vdl$SfPtwMCcq6nn0gYnHjaEV7Zq.XUg0oF/RQBIbqIt2bd6MUuj7QrxBdeQBQitxvAlgFijv71dKnEmS8v9qObAx0
+      groups:
+        - wheel
+storage:
+  files:
+    - path: /etc/ssh/sshd_config.d/20-enable-passwords.conf
+      mode: 0644
+      contents:
+        inline: |
+          # Fedora CoreOS disables SSH password login by default.
+          # Enable it.
+          # This file must sort before 40-disable-passwords.conf.
+          PasswordAuthentication yes
+    - path: /etc/sudoers.d/wheel-nopasswd
+      mode: 0440
+      contents:
+        inline: |
+          # Enable passwordless sudo for members in the wheel group
+          %wheel	ALL=(ALL:ALL) NOPASSWD:ALL

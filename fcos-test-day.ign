@@ -1,0 +1,34 @@
+{
+  "ignition": {
+    "version": "3.3.0"
+  },
+  "passwd": {
+    "users": [
+      {
+        "groups": [
+          "wheel"
+        ],
+        "name": "clouduser",
+        "passwordHash": "$6$kmAqbdDq55w6vdl$SfPtwMCcq6nn0gYnHjaEV7Zq.XUg0oF/RQBIbqIt2bd6MUuj7QrxBdeQBQitxvAlgFijv71dKnEmS8v9qObAx0"
+      }
+    ]
+  },
+  "storage": {
+    "files": [
+      {
+        "path": "/etc/ssh/sshd_config.d/20-enable-passwords.conf",
+        "contents": {
+          "source": "data:,%23%20Fedora%20CoreOS%20disables%20SSH%20password%20login%20by%20default.%0A%23%20Enable%20it.%0A%23%20This%20file%20must%20sort%20before%2040-disable-passwords.conf.%0APasswordAuthentication%20yes%0A"
+        },
+        "mode": 420
+      },
+      {
+        "path": "/etc/sudoers.d/wheel-nopasswd",
+        "contents": {
+          "source": "data:,%23%20Enable%20passwordless%20sudo%20for%20members%20in%20the%20wheel%20group%0A%25wheel%09ALL%3D(ALL%3AALL)%20NOPASSWD%3AALL%0A"
+        },
+        "mode": 288
+      }
+    ]
+  }
+}
