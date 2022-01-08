@@ -6,7 +6,7 @@ Automated, hassle-free launch of FCOS instances with Ignition config on selected
 
 ## Getting started
 
-To make the most out of this repo, you need [Terraform](https://www.terraform.io/) and [Packer](https://www.packer.io/) installed. Then, clone this repo and make it your working directory:
+To make the most out of this repo, you need [Terraform](https://www.terraform.io/) installed. Then, clone this repo and make it your working directory:
 
 ```bash
 $ git clone https://github.com/DonaldKellett/fcos-test-day-cloud-launch.git
@@ -89,6 +89,71 @@ $ terraform destroy -var fcos_ami="$FCOS_AMI_ID"
 If you specified an instance type other than `t2.micro`, you'll need to specify the `fcos_instance_type` variable accordingly as well with the above command.
 
 Congratulations! You have completed the [Cloud launch - AWS](https://fedoraproject.org/wiki/QA:Testcase_CoreOS_AWS) test case for FCOS.
+
+### GCP
+
+This assumes you have [Google Cloud SDK](https://cloud.google.com/sdk) installed and have [application default credentials](https://cloud.google.com/sdk/gcloud/reference/auth/application-default/login) configured. If not, run `gcloud auth application-default login` after installing the SDK. Furthermore, you should have a [Google Cloud project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) ready.
+
+Make this project your working directory. Now move into the `gcp` directory:
+
+```bash
+$ cd gcp
+```
+
+Initialize the project:
+
+```bash
+$ terraform init
+```
+
+Export the project ID in an environment variable `GCP_PROJECT_ID`:
+
+```bash
+$ export GCP_PROJECT_ID="XXXXXXXXXX"
+```
+
+Now apply the config, answering `yes` when prompted. The `project_id` input variable must be specified; all others are optional:
+
+```bash
+$ terraform apply -var project_id="$GCP_PROJECT_ID"
+```
+
+Once the resources are created, Terraform reports the public IP of the instance. Export that in an environment variable `FCOS_PUBLIC_IP`:
+
+```bash
+$ export FCOS_PUBLIC_IP="X.X.X.X"
+```
+
+Now connect to the instance, entering `clouduser` as the password when prompted:
+
+```bash
+$ ssh clouduser@"$FCOS_PUBLIC_IP"
+```
+
+Run a few commands in the instance to confirm everything is working as expected. Now exit the session:
+
+```bash
+$ exit
+logout
+Connection to X.X.X.X closed.
+```
+
+Tear down the infrastructure to save costs, specifying the same set of variables as you did with `apply`:
+
+```bash
+$ terraform destroy -var project_id="$GCP_PROJECT_ID"
+```
+
+Congratulations! You have completed the [Cloud launch - GCP](https://fedoraproject.org/wiki/QA:Testcase_CoreOS_GCP) test case for FCOS.
+
+P.S. here's a list of optional variables supported:
+
+| Name | Description | Default value |
+| --- | --- | --- |
+| `region` | The region to launch the instance in | `us-central1` |
+| `zone` | The zone to launch the instance in within the specified region | `us-central1-a` |
+| `machine_type` | The instance type to use | `e2-micro` |
+| `fcos_stream` | The stream to use for the FCOS instance | `next` |
 
 ## License
 
